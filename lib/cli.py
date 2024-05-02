@@ -27,6 +27,16 @@ def main():
                 logged_in = False
             elif choice == "1":
                 begin_test()
+            #game will live here:
+            #take 3 random sentences
+            #countdown
+            #capture input
+            #capture time
+            #compare to sentence
+            #evaluate accuracy
+            #update test history
+            #update user information
+
             elif choice == "2":
                 leaderboard()
             elif choice == "3":

@@ -18,7 +18,7 @@ def login():
 
 def begin_test():
     print("Beginning test: ")
-    print("")
+
 
 def user_info():
     print(username)
