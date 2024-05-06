@@ -38,14 +38,20 @@ def test(username):
     user = User.find_by_name(username)
     sentences = Sentence.get_all()
     test_sentence = sentences[random.randint(0, (len(sentences)-1))]
+
     print(test_sentence.string)
     time.sleep(.2)
     start = time.time()
     test_answer = input()
     end = time.time()
     final_time = round((end - start), 1)
-    print(f"time: {final_time} seconds")
-    Test.create(test_answer, final_time, 4, user.id, test_sentence.id)
+
+    misses = sum(1 for a, b in zip(test_sentence.string, test_answer) if a != b)
+    accuracy = round((((len(test_sentence.string)-misses)/(len(test_sentence.string)))*100), 1)
+
+    print(f"time: {final_time}s")
+    print(f"accuracy: {accuracy}%")
+    Test.create(test_answer, final_time, accuracy, user.id, test_sentence.id)
 
 
 def leaderboard():
