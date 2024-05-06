@@ -21,6 +21,9 @@ def login():
 
 def begin_test(username):
     print("--------------------------------| INITIALIZING |--------------------------------")
+    print("")
+    print("TASK: Type the presented sentence as quickly, and as accurately as possible.")
+    print("")
     input("Press enter to begin: ")
     print("3...")
     time.sleep(1)
