@@ -5,10 +5,11 @@ from models.sentence import Sentence
 class Test:
     all = {}
 
-    def __init__(self, user_input, time, accuracy, user_id_, sentence_id_,):
+    def __init__(self, user_input, time, accuracy, score, user_id_, sentence_id_,):
         self.user_input = user_input
         self.time = time
         self.accuracy = accuracy
+        self.score = score
         self.user_id_ = user_id_
         self.sentence_id_ = sentence_id_
 
@@ -24,6 +25,7 @@ class Test:
             user_input TEXT,
             time INTEGER,
             accuracy INTEGER,
+            score INTEGER,
             user_id_ INTEGER,
             sentence_id_ INTEGER,
             FOREIGN KEY (user_id_) REFERENCES users(id),
@@ -46,11 +48,11 @@ class Test:
         Update object id attribute using the primary key value of new row.
         Save the object in local dictionary using table row's PK as dictionary key"""
         sql = """
-                INSERT INTO tests (user_input, time, accuracy, user_id_, sentence_id_)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO tests (user_input, time, accuracy, score, user_id_, sentence_id_)
+                VALUES (?, ?, ?, ?, ?, ?)
         """
 
-        CURSOR.execute(sql, (self.user_input, self.time, self.accuracy, self.user_id_, self.sentence_id_,))
+        CURSOR.execute(sql, (self.user_input, self.time, self.accuracy, self.score, self.user_id_, self.sentence_id_,))
         CONN.commit()
 
         self.id = CURSOR.lastrowid
@@ -60,10 +62,10 @@ class Test:
         """Update the table row corresponding to the current Test instance."""
         sql = """
             UPDATE tests
-            SET user_input = ?, time = ?, accuracy = ?, user_id_ = ?, sentence_id_ = ?
+            SET user_input = ?, time = ?, accuracy = ?, score = ?, user_id_ = ?, sentence_id_ = ?
             WHERE id = ?
         """
-        CURSOR.execute(sql, (self.user_input, self.time, self.accuracy, self.user_id_, self.sentence_id_,))
+        CURSOR.execute(sql, (self.user_input, self.time, self.accuracy, self.score, self.user_id_, self.sentence_id_,))
         CONN.commit()
 
     def delete(self):
@@ -85,9 +87,9 @@ class Test:
         self.id = None
 
     @classmethod
-    def create(cls, user_input, time, accuracy, user_id_, sentence_id_):
+    def create(cls, user_input, time, accuracy, score, user_id_, sentence_id_):
         """ Initialize a new Test instance and save the object to the database """
-        test = cls(user_input, time, accuracy, user_id_, sentence_id_)
+        test = cls(user_input, time, accuracy, score, user_id_, sentence_id_)
         test.save()
         return test
 
@@ -102,11 +104,12 @@ class Test:
             test.user_input = row[1]
             test.time = row[2]
             test.accuarcy = row[3]
-            test.user_id_ = row[4]
-            test.sentence_id_ = row[5]
+            test.score = row[4]
+            test.user_id_ = row[5]
+            test.sentence_id_ = row[6]
         else:
             # not in dictionary, create new instance and add to dictionary
-            test = cls(row[1], row[2], row[3], row[4], row[5])
+            test = cls(row[1], row[2], row[3], row[4], row[5], row[6])
             test.id = row[0]
             cls.all[test.id] = test
         return test

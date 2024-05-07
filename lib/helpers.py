@@ -48,10 +48,12 @@ def test(username):
 
     misses = sum(1 for a, b in zip(test_sentence.string, test_answer) if a != b)
     accuracy = round((((len(test_sentence.string)-misses)/(len(test_sentence.string)))*100), 1)
-
+    final_score = accuracy/final_time
+    
+    print(f"score: {final_score} points")
     print(f"time: {final_time}s")
     print(f"accuracy: {accuracy}%")
-    Test.create(test_answer, final_time, accuracy, user.id, test_sentence.id)
+    Test.create(test_answer, final_time, accuracy, final_score, user.id, test_sentence.id)
 
 
 def leaderboard():
@@ -67,12 +69,13 @@ def leaderboard():
                 "total_tests": 0,
                 "avg_time": 999,
                 "avg_accuracy": 999,
+                "avg_score": 0
             })
 
-    sorted_data = sorted(leaderboard_data, key=lambda x: x['avg_time'])   
+    sorted_data = sorted(leaderboard_data, key=lambda x: x['avg_score'], reverse = True)   
     index = 1 
     for user in sorted_data:
-        print(f"{index}. {user['username']}: Average Time: {round(user['avg_time'], 1)}")
+        print(f"{index}. {user['username']}: Average Score: {round(user['avg_score'], 1)}")
         index+=1
     print("-------------------------------------------------------------------------------")
 
@@ -122,6 +125,7 @@ def calculate_stats(username):
         "total_tests": 0,
         "avg_time": 0,
         "avg_accuracy": 0,
+        "avg_score": 0
     }
 
     user = User.find_by_name(username)
@@ -135,6 +139,7 @@ def calculate_stats(username):
 
         stats["avg_time"] = total_time / stats["total_tests"]
         stats["avg_accuracy"] = total_accuracy / stats["total_tests"]
+        stats["avg_score"] = stats["avg_accuracy"]/stats["avg_time"]
         return stats
 
-#work on scoring system?
+    
