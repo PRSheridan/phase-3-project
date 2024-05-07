@@ -136,3 +136,5 @@ def calculate_stats(username):
         stats["avg_time"] = total_time / stats["total_tests"]
         stats["avg_accuracy"] = total_accuracy / stats["total_tests"]
         return stats
+
+#work on scoring system?
