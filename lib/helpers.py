@@ -38,13 +38,13 @@ def begin_test(username):
     print("0. Back")
     confirmation = input("> ")
     if confirmation == "1":
-        print("3...")
+        cprint("\n""3...", "red")
         time.sleep(1)
-        print("2...")
+        cprint("\n""2...", "yellow")
         time.sleep(1)
-        print("1...")
+        cprint("\n""1...", "white")
         time.sleep(1)
-        print("GO")
+        cprint("\n""GO""\n", "green")
         test(username)
     elif confirmation == "0":
         print("Returning to menu...")
@@ -56,7 +56,7 @@ def test(username):
     sentences = Sentence.get_all()
     test_sentence = sentences[random.randint(0, (len(sentences)-1))]
 
-    print(test_sentence.string)
+    cprint(f"{test_sentence.string}""\n", "yellow", attrs=["bold", "underline"])
     time.sleep(.2)
     start = time.time()
     test_answer = input()
@@ -65,12 +65,15 @@ def test(username):
 
     misses = sum(1 for a, b in zip(test_sentence.string, test_answer) if a != b)
     accuracy = round((((len(test_sentence.string)-misses)/(len(test_sentence.string)))*100), 1)
-    final_score = accuracy/final_time
+    final_score = round((accuracy/final_time), 1)
     
-    print(f"score: {final_score} points")
-    print(f"time: {final_time}s")
-    print(f"accuracy: {accuracy}%")
+    cprint("\n""      Test Results:      ""\n", attrs=["underline"])
+    print(f"     score: {final_score} points")
+    print(f"      time: {final_time}s")
+    print(f"  accuracy: {accuracy}%")
     Test.create(test_answer, final_time, accuracy, final_score, user.id, test_sentence.id)
+    input("\n""Press ENTER to return to the menu...")
+    cprint("\n"f"{page_break_tl}GAMENAME{page_break_tr}""\n", "light_magenta")
 
 # Display average scores of all users sorted best first
 def leaderboard():

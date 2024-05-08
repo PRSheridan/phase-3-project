@@ -14,7 +14,7 @@ from helpers import (
     delete_user
 )
 
-page_break_bottom = "-------------------------------------------------------------------------------"
+page_break_bottom = "---------------------------------------------------------------------------------"
 page_break_tl = "----------------------------------| "
 page_break_tr = " |----------------------------------"
 
@@ -27,13 +27,13 @@ def main():
         if (logged_in == False):
             print("Initializing...")
             time.sleep(1)
-            cprint("-----------------------------------| GAME NAME |------------------------------------" "\n", "light_magenta")
+            cprint("\n"f"{page_break_tl}GAMENAME{page_break_tr}""\n", "light_magenta")
             cprint(
-                '              GAMENAME is designed to test a subjects typing ability.'
-                '\n' '              Each test measures speed, and accuracy and provides the subject'
-                '\n' '              with a final score to be compared with others in the leaderboard.'
+                '            GAMENAME is designed to test a subjects typing ability.'
+                '\n' '          Each test measures speed, and accuracy and provides the subject'
+                '\n' '          with a final score to be compared with others in the leaderboard.'
                 )
-            cprint("\n" "-------------------------------------------------------------------------------------", "light_magenta")
+            cprint("\n" f"{page_break_bottom}", "light_magenta")
             menu(logged_in)
             choice = input("> ")
             if choice == "0":
