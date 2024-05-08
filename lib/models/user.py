@@ -145,3 +145,39 @@ class User:
 
         row = CURSOR.execute(sql, (name,)).fetchone()
         return cls.instance_from_db(row) if row else None
+
+    def tests(self):
+        """Return all instances of test for the current user instance"""
+        from models.test import Test
+        sql = """
+            SELECT *
+            FROM tests
+            WHERE user_id_ is ?
+        """
+
+        rows = CURSOR.execute(sql, (self.id,)).fetchall()
+        return [Test.instance_from_db(row) for row in rows]
+
+    def avg_time(self):
+        """Return the average time for all tests of the current user instance"""
+        average = 0
+        user_times = [test.time for test in self.tests()]
+        for time in user_times:
+            average = average + time
+        return average/len(user_times)
+
+    def avg_accuracy(self):
+        """Return the average accuracy for all tests of the current user instance"""
+        average = 0
+        user_accuracies = [test.accuracy for test in self.tests()]
+        for accuracy in user_accuracies:
+            average = average + accuracy
+        return average/len(user_accuracies)
+
+    def avg_score(self):
+        """Return the average score for all tests of the current user instance"""
+        average = 0
+        user_scores = [test.score for test in self.tests()]
+        for score in user_scores:
+            average = average + score
+        return average/len(user_scores)

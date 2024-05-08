@@ -8,7 +8,7 @@ from helpers import (
     login,
     begin_test,
     leaderboard,
-    stats,
+    profile,
     change_name,
     reset_stats,
     delete_user
@@ -36,7 +36,7 @@ def main():
             cprint("\n" f"{page_break_bottom}", "light_magenta")
             menu(logged_in)
             choice = input("> ")
-            if choice == "0":
+            if choice == "00":
                 exit_program()
             elif choice == "1":
                 username = login()
@@ -46,9 +46,9 @@ def main():
         else:
             menu(logged_in)
             choice = input("> ")
-            if choice == "0":
+            if choice == "00":
                 exit_program()
-            elif choice == "00":
+            elif choice == "0":
                 logged_in = False
                 username = None
 
@@ -62,53 +62,54 @@ def main():
 
 #STATISTICS MENU ------------------------------------------------------------------------
             elif choice == "3":
-                stats(username)
-                stats_menu()
+                profile(username)
+                profile_menu()
                 choice = input("> ")
 
 ##CHANGE USERNAME ------------------------------------------------------------------------
                 if(choice == "1"):
                     username = change_name(username)
-                    print(f"Username has been changed to: {username}")
 
 ##RESET STATS ----------------------------------------------------------------------------
                 elif(choice == "2"):
                     reset_stats(username)
-                    print("Statistics reset")
 
 ##DELETE USER ----------------------------------------------------------------------------
                 elif(choice == "3"):
                     delete_user(username)
                     logged_in = False
                     username = None
-                elif(choice == "0"):
-                    print("Navigating...")
+                elif(choice == ""):
+                    print("Navigating...""\n")                    
                 else:
-                    print("Invalid choice")
+                    cprint("Invalid choice""\n", "red")
             else:
-                print("Invalid choice")
+                cprint("Invalid choice""\n", "red")
+
 #CLI MENU ----------------------------------------------------------------------------------
 def menu(logged_in):
     if (logged_in == False):
         cprint("\n" "Login to continue:" "\n", "light_blue")
         print("1. Login")
-        print("0. Quit")
+        print("00. Quit")
     else:
+        cprint(f"{page_break_tl}Placeholder{page_break_tr}""\n", "light_magenta")
         cprint("Select an option below:" "\n", "light_blue")
         cprint("1. Test")
         cprint("2. Leaderboard")
-        cprint("3. Statistics")
-        cprint("00. Logout")
-        cprint("0. Quit")
+        cprint("3. Profile")
+        cprint("0. Logout")
+        cprint("00. Quit")
         cprint("\n"f"{page_break_bottom}", "light_magenta")
 
 #STATS MENU ----------------------------------------------------------------------------------
-def stats_menu():
+def profile_menu():
     cprint("Select an option below:" "\n", "light_blue")
     cprint("1. Change username")
     cprint("2. Reset stats")
     cprint("3. Delete User")
-    cprint("0. Back")
+    print("\n""Press ENTER to return to the menu...")
+    cprint("\n"f"{page_break_bottom}""\n", "light_magenta")
 
 if __name__ == "__main__":
     main()

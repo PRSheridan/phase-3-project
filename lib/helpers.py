@@ -15,10 +15,10 @@ page_break_tr = " |----------------------------------"
 def login():
     username = input("\n" "Enter your username: ")
     if current_user := User.find_by_name(username):
-        print("Initializing...")
+        print("\n""Initializing...")
+        time.sleep(.5)
+        print("\n"f'Welcome back, {username}.'"\n")
         time.sleep(1)
-        cprint(f"{page_break_tl}Placeholder{page_break_tr}""\n", "light_magenta")
-        print(f'Welcome back, {username}.')
     else:
         try:
             User.create(username)
@@ -73,7 +73,7 @@ def test(username):
     print(f"  accuracy: {accuracy}%")
     Test.create(test_answer, final_time, accuracy, final_score, user.id, test_sentence.id)
     input("\n""Press ENTER to return to the menu...")
-    cprint("\n"f"{page_break_tl}GAMENAME{page_break_tr}""\n", "light_magenta")
+    #cprint("\n"f"{page_break_tl}GAMENAME{page_break_tr}""\n", "light_magenta")
 
 # Display average scores of all users sorted best first
 def leaderboard():
@@ -98,28 +98,36 @@ def leaderboard():
         cprint(f"                        [{index}]. {user['username']}: Average Score: {round(user['avg_score'], 1)}", attrs=["bold"])
         index+=1
     cprint("\n"f"{page_break_bottom}""\n", "light_magenta")
-    print("\n" "Press ENTER to return to the menu...")
-    input("> ")
+    print("Press ENTER to return to the menu...")
+    input("> ""\n")
+    #cprint(f"{page_break_tl}Placeholder{page_break_tr}""\n", "light_magenta")
+
 
 # Display the average stats and number of tests taken of the current user
-def stats(username):
+def profile(username):
     cprint("\n"f"{page_break_tl}{username.upper()}{page_break_tr}""\n", "light_magenta")
     user = User.find_by_name(username)
     if all_tests := Test.find_by_user_id(user.id):
         temp_stats = calculate_stats(username)
         cprint(f"                                 Tests taken: {temp_stats['total_tests']}"
         '\n' f"                                Average time: {round(temp_stats['avg_time'], 1)}"
-        '\n' f"                            Average accuracy: {round(temp_stats['avg_accuracy'], 1)}"
+        '\n' f"                            Average accuracy: {round(temp_stats['avg_accuracy'], 1)}""\n"
         ,attrs=["bold"])
     else:
-        print(f"No stats found.")
-    cprint("\n"f"{page_break_bottom}""\n", "light_magenta")
+        cprint(f"No stats found.", "red")
 
 # Prompt the user for a new username and update
 def change_name(username):
     user = User.find_by_name(username)
-    user.name = input("\n" "Enter a new unique username: ")
+    new_name = input("\n" "Enter a new unique username: ")
+    users = User.get_all()
+    for this_user in users:
+        if this_user.name == new_name:
+            cprint(f"Username {new_name} already taken", "red")
+            return username
+    user.name = new_name
     user.update()
+    print(f"Username has been changed to: {user.name}")
     return user.name
 
 # Delete all previous tests of user.id
@@ -128,6 +136,7 @@ def reset_stats(username):
     if all_tests := Test.find_by_user_id(user.id):
         for test in all_tests:
             test.delete()
+        cprint("Statistics reset", "red")
     
 # Prompt for confirmation and delete user 
 def delete_user(username):
@@ -135,12 +144,12 @@ def delete_user(username):
     confirm = input("\n" "Type Y/N to confirm deletion: ")
     if confirm == "Y":
         user.delete()
-        print("User Account Terminated")
+        cprint("User Account Terminated", "red")
     else:
         print("Action Cancelled")
 
 def exit_program():
-    print("\n" "Shutting down testing chamber...")
+    cprint("\n" "Shutting down testing chamber...", "red")
     exit()
 
 # Calculate average time, accuracy, and score for stats page: return a dict
@@ -152,17 +161,10 @@ def calculate_stats(username):
         "avg_accuracy": 0,
         "avg_score": 0
     }
-
-    user = User.find_by_name(username)
-    if all_tests := Test.find_by_user_id(user.id):
-        stats["total_tests"] = len(all_tests)
-        total_time = 0
-        total_accuracy = 0
-        for test in all_tests:
-            total_time += test.time
-            total_accuracy += test.accuracy
-
-        stats["avg_time"] = total_time / stats["total_tests"]
-        stats["avg_accuracy"] = total_accuracy / stats["total_tests"]
-        stats["avg_score"] = stats["avg_accuracy"]/stats["avg_time"]
-        return stats
+ 
+    current_user = User.find_by_name(username)
+    stats["total_tests"] = len(current_user.tests())
+    stats["avg_time"] = current_user.avg_time()
+    stats["avg_accuracy"] = current_user.avg_accuracy()
+    stats["avg_score"] = current_user.avg_score()
+    return stats
