@@ -1,4 +1,7 @@
 # lib/cli.py
+#python3 -m pip install --upgrade termcolor
+import time
+from termcolor import colored, cprint
 
 from helpers import (
     exit_program,
@@ -11,6 +14,10 @@ from helpers import (
     delete_user
 )
 
+page_break_bottom = "-------------------------------------------------------------------------------"
+page_break_tl = "----------------------------------| "
+page_break_tr = " |----------------------------------"
+
 def main():
     logged_in = False
     username = None
@@ -18,6 +25,15 @@ def main():
 
 #LOGIN SCREEN -------------------------------------------------------------------------
         if (logged_in == False):
+            print("Initializing...")
+            time.sleep(1)
+            cprint("-----------------------------------| GAME NAME |------------------------------------" "\n", "light_magenta")
+            cprint(
+                '              GAMENAME is designed to test a subjects typing ability.'
+                '\n' '              Each test measures speed, and accuracy and provides the subject'
+                '\n' '              with a final score to be compared with others in the leaderboard.'
+                )
+            cprint("\n" "-------------------------------------------------------------------------------------", "light_magenta")
             menu(logged_in)
             choice = input("> ")
             if choice == "0":
@@ -74,26 +90,25 @@ def main():
 #CLI MENU ----------------------------------------------------------------------------------
 def menu(logged_in):
     if (logged_in == False):
-        print("Please login to continue:")
+        cprint("\n" "Login to continue:" "\n", "light_blue")
         print("1. Login")
         print("0. Quit")
     else:
-        print("--------------------------------| Placeholder Name |--------------------------------")
-        print("Please select an option:")
-        print("1. Begin test")
-        print("2. Leaderboard")
-        print("3. Statistics")
-        print("00. Logout")
-        print("0. Quit")
-        print("-------------------------------------------------------------------------------------")
+        cprint("Select an option below:" "\n", "light_blue")
+        cprint("1. Test")
+        cprint("2. Leaderboard")
+        cprint("3. Statistics")
+        cprint("00. Logout")
+        cprint("0. Quit")
+        cprint("\n"f"{page_break_bottom}", "light_magenta")
 
 #STATS MENU ----------------------------------------------------------------------------------
 def stats_menu():
-    print("Please select an option:")
-    print("1. Change username")
-    print("2. Reset stats")
-    print("3. Delete User")
-    print("0. Back")
+    cprint("Select an option below:" "\n", "light_blue")
+    cprint("1. Change username")
+    cprint("2. Reset stats")
+    cprint("3. Delete User")
+    cprint("0. Back")
 
 if __name__ == "__main__":
     main()
