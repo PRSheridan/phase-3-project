@@ -174,6 +174,14 @@ class User:
             average = average + accuracy
         return average/len(user_accuracies)
 
+    def avg_wpm(self):
+        """Return the average wpm for all tests of the current user instance"""
+        average = 0
+        user_wpms = [test.wpm for test in self.tests()]
+        for wpm in user_wpms:
+            average = average + wpm
+        return average/len(user_wpms)
+
     def avg_score(self):
         """Return the average score for all tests of the current user instance"""
         average = 0

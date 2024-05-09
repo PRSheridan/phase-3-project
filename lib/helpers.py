@@ -71,15 +71,17 @@ def test(username):
     user = User.find_by_name(username)
     sentences = Sentence.get_all()
     test_sentence = sentences[random.randint(0, (len(sentences)-1))]
-
+    word_count = len(test_sentence.string.split())
     cprint(f"{test_sentence.string}""\n", "yellow", attrs=["bold", "underline"])
     time.sleep(.2)
     start = time.time()
     test_answer = input()
     end = time.time()
+
     final_time = round((end - start), 1)
     misses = sum(1 for a, b in zip(test_sentence.string, test_answer) if a != b)
     accuracy = round((((len(test_sentence.string)-misses)/(len(test_sentence.string)))*100), 1)
+    wpm = round(((word_count * 60)/final_time), 1)
     
     #final score weight adjusted for sentence length: midpoint ~25 characters
     final_score = accuracy/final_time
@@ -87,9 +89,10 @@ def test(username):
     
     cprint("\n""      Test Results:      ""\n", attrs=["underline"])
     print(f"     score: {final_score} points")
+    print(f"       WPM: {wpm} WPM")
     print(f"      time: {final_time}s")
     print(f"  accuracy: {accuracy}%")
-    Test.create(test_answer, final_time, accuracy, final_score, user.id, test_sentence.id)
+    Test.create(test_answer, final_time, accuracy, wpm, final_score, user.id, test_sentence.id)
     cprint("\n""Press ENTER to return to the menu...", "light_blue")
     input("> ")
 
@@ -107,6 +110,7 @@ def leaderboard():
                 "total_tests": 0,
                 "avg_time": 999,
                 "avg_accuracy": 999,
+                "avg_wpm": 0,
                 "avg_score": 0
             })
 
@@ -126,6 +130,8 @@ def profile(username):
     if all_tests := Test.find_by_user_id(user.id):
         temp_stats = calculate_stats(username)
         cprint(f"                                 Tests taken: {temp_stats['total_tests']}"
+        '\n' f"                               Average score: {round(temp_stats['avg_score'], 1)}"
+        '\n' f"                                 Average WPM: {round(temp_stats['avg_wpm'], 1)}"
         '\n' f"                                Average time: {round(temp_stats['avg_time'], 1)}"
         '\n' f"                            Average accuracy: {round(temp_stats['avg_accuracy'], 1)}""\n"
         ,attrs=["bold"])
@@ -179,6 +185,7 @@ def calculate_stats(username):
         "total_tests": 0,
         "avg_time": 0,
         "avg_accuracy": 0,
+        "avg_wpm": 0,
         "avg_score": 0
     }
  
@@ -186,5 +193,6 @@ def calculate_stats(username):
     stats["total_tests"] = len(current_user.tests())
     stats["avg_time"] = current_user.avg_time()
     stats["avg_accuracy"] = current_user.avg_accuracy()
+    stats["avg_wpm"] = current_user.avg_wpm()
     stats["avg_score"] = current_user.avg_score()
     return stats
