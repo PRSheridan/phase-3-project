@@ -1,7 +1,6 @@
+#!/usr/bin/env python3
 # lib/cli.py
 #python3 -m pip install --upgrade termcolor
-import time
-from termcolor import colored, cprint
 
 from helpers import (
     exit_program,
@@ -16,6 +15,9 @@ from helpers import (
     delete_user
 )
 
+import time
+from termcolor import colored, cprint
+
 page_break_bottom = "---------------------------------------------------------------------------------"
 page_break_tl = "----------------------------------| "
 page_break_tr = " |----------------------------------"
@@ -29,9 +31,9 @@ def main():
         if (logged_in == False):
             cprint("Initializing...", "dark_grey")
             time.sleep(1)
-            cprint("\n"f"{page_break_tl}GAMENAME{page_break_tr}""\n", "light_magenta")
+            cprint("\n"f"{page_break_tl}Typewell{page_break_tr}""\n", "light_magenta")
             cprint(
-                '            GAMENAME is designed to test a subjects typing ability.'
+                '            Typewell is designed to test a subjects typing ability.'
                 '\n' '          Each test measures speed, and accuracy and provides the subject'
                 '\n' '          with a final score to be compared with others in the leaderboard.'
                 )
@@ -97,7 +99,7 @@ def menu(logged_in):
         print("1. Login")
         print("00. Quit")
     else:
-        cprint(f"{page_break_tl}Placeholder{page_break_tr}""\n", "light_magenta")
+        cprint(f"{page_break_tl}Typewell{page_break_tr}""\n", "light_magenta")
         cprint("Select an option below:" "\n", "light_blue")
         print("1. Test")
         print("2. Leaderboard")
@@ -110,14 +112,14 @@ def menu(logged_in):
 def profile_menu():
     cprint("Select an option below:" "\n", "light_blue")
     print("1. Change username")
-    print("2. Reset stats")
-    print("3. Delete User")
+    print("2. Reset statistics")
+    print("3. Delete profile")
     cprint("\n""Press ENTER to return to the menu...", "light_blue")
     cprint("\n"f"{page_break_bottom}""\n", "light_magenta")
 
 #TEST MENU ------------------------------------------------------------------------------------
 def test_menu():
-    cprint("\n"f"{page_break_tl}Placeholder{page_break_tr}""\n", "light_magenta")
+    cprint("\n"f"{page_break_tl}Typewell{page_break_tr}""\n", "light_magenta")
     print("TASK: Type the presented sentence as quickly, and as accurately as possible.""\n")
     cprint("Select an option below:" "\n", "light_blue")
     print("1. Begin test")
