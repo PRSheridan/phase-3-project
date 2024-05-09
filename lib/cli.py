@@ -7,6 +7,8 @@ from helpers import (
     exit_program,
     login,
     begin_test,
+    show_sentences,
+    add_sentence,
     leaderboard,
     profile,
     change_name,
@@ -25,7 +27,7 @@ def main():
 
 #LOGIN SCREEN -------------------------------------------------------------------------
         if (logged_in == False):
-            print("Initializing...")
+            cprint("Initializing...", "dark_grey")
             time.sleep(1)
             cprint("\n"f"{page_break_tl}GAMENAME{page_break_tr}""\n", "light_magenta")
             cprint(
@@ -51,36 +53,38 @@ def main():
             elif choice == "0":
                 logged_in = False
                 username = None
-
-##BEGIN GAME -----------------------------------------------------------------------------
+###TEST MENU ------------------------------------
             elif choice == "1":
-                begin_test(username)
-
-##LEADERBOARD ----------------------------------------------------------------------------
+                test_menu()
+                choice = input("> ")
+                if choice == "1":
+                    begin_test(username)
+                elif choice == "2":
+                    show_sentences()
+                elif choice == "3":
+                    add_sentence()
+                elif choice == "":
+                    cprint("Returning to menu...", "dark_grey")
+                else:
+                    cprint("Invalid choice.", "red")
             elif choice == "2":
                 leaderboard()
 
-#STATISTICS MENU ------------------------------------------------------------------------
+###STATS MENU ------------------------------------
             elif choice == "3":
                 profile(username)
                 profile_menu()
                 choice = input("> ")
-
-##CHANGE USERNAME ------------------------------------------------------------------------
                 if(choice == "1"):
                     username = change_name(username)
-
-##RESET STATS ----------------------------------------------------------------------------
                 elif(choice == "2"):
                     reset_stats(username)
-
-##DELETE USER ----------------------------------------------------------------------------
                 elif(choice == "3"):
                     delete_user(username)
                     logged_in = False
                     username = None
                 elif(choice == ""):
-                    print("Navigating...""\n")                    
+                    cprint("Navigating...""\n", "dark_grey")                    
                 else:
                     cprint("Invalid choice""\n", "red")
             else:
@@ -95,20 +99,31 @@ def menu(logged_in):
     else:
         cprint(f"{page_break_tl}Placeholder{page_break_tr}""\n", "light_magenta")
         cprint("Select an option below:" "\n", "light_blue")
-        cprint("1. Test")
-        cprint("2. Leaderboard")
-        cprint("3. Profile")
-        cprint("0. Logout")
-        cprint("00. Quit")
+        print("1. Test")
+        print("2. Leaderboard")
+        print("3. Profile")
+        print("0. Logout")
+        print("00. Quit")
         cprint("\n"f"{page_break_bottom}", "light_magenta")
 
 #STATS MENU ----------------------------------------------------------------------------------
 def profile_menu():
     cprint("Select an option below:" "\n", "light_blue")
-    cprint("1. Change username")
-    cprint("2. Reset stats")
-    cprint("3. Delete User")
-    print("\n""Press ENTER to return to the menu...")
+    print("1. Change username")
+    print("2. Reset stats")
+    print("3. Delete User")
+    cprint("\n""Press ENTER to return to the menu...", "light_blue")
+    cprint("\n"f"{page_break_bottom}""\n", "light_magenta")
+
+#TEST MENU ------------------------------------------------------------------------------------
+def test_menu():
+    cprint("\n"f"{page_break_tl}Placeholder{page_break_tr}""\n", "light_magenta")
+    print("TASK: Type the presented sentence as quickly, and as accurately as possible.""\n")
+    cprint("Select an option below:" "\n", "light_blue")
+    print("1. Begin test")
+    print("2. View sentences")
+    print("3. Add a sentence")
+    cprint("\n""Press ENTER to return to the menu...", "light_blue")
     cprint("\n"f"{page_break_bottom}""\n", "light_magenta")
 
 if __name__ == "__main__":

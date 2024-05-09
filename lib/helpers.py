@@ -15,39 +15,55 @@ page_break_tr = " |----------------------------------"
 def login():
     username = input("\n" "Enter your username: ")
     if current_user := User.find_by_name(username):
-        print("\n""Initializing...")
+        cprint("Initializing...", "dark_grey")
         time.sleep(.5)
         print("\n"f'Welcome back, {username}.'"\n")
         time.sleep(1)
     else:
         try:
             User.create(username)
-            print("Initializing...")
-            time.sleep(1)
+            cprint("Initializing...", "dark_grey")
+            time.sleep(.8)
             print(f'New profile created, welcome {username}.')
         except Exception as exc:
             print("Error creating new profile:", exc)
     login = True
     return username
 
-# Confirmation and countdown to testing
+# Countdown to test, and initialize test instance
 def begin_test(username):
-    cprint("\n"f"{page_break_tl}INITIALIZING{page_break_tr}""\n", "light_magenta")
-    print("TASK: Type the presented sentence as quickly, and as accurately as possible.""\n")
-    print("1. Begin test")
-    print("0. Back")
-    confirmation = input("> ")
-    if confirmation == "1":
-        cprint("\n""3...", "red")
-        time.sleep(1)
-        cprint("\n""2...", "yellow")
-        time.sleep(1)
-        cprint("\n""1...", "white")
-        time.sleep(1)
-        cprint("\n""GO""\n", "green")
-        test(username)
-    elif confirmation == "0":
-        print("Returning to menu...")
+    cprint("\n""3...", "red")
+    time.sleep(1)
+    cprint("\n""2...", "yellow")
+    time.sleep(1)
+    cprint("\n""1...", "white")
+    time.sleep(1)
+    cprint("\n""GO""\n", "green")
+    test(username)
+
+# List all current sentence instances
+def show_sentences():
+    cprint("\n""Saved sentences:", attrs=["underline"])
+    sentences = Sentence.get_all()
+    for sentence in sentences:
+        cprint(sentence.string)
+    cprint("\n""Press ENTER to return to the menu...", "light_blue")
+    input("> ""\n")
+
+# Create a new sentence instance
+def add_sentence():
+    cprint("\n""A new sentence cannot contain numbers, and should not contain any punctuation.")
+    cprint("Enter a new sentence below (Enter nothing to cancel):", "light_blue")
+    new_string = input("> ")
+    if new_string == "":
+        return new_string
+    try:
+        Sentence.create(new_string)
+        cprint("Initializing...""\n", "dark_grey")
+        time.sleep(.5)
+        cprint(f"New sentence, \"{new_string}\" has been added.""\n", "light_green")
+    except Exception as exc:
+        print("\n""Error creating new sentence:", exc)
 
 # Select a random test sentence, start a timer, prompt input, end timer 
 # Calculate final_time, accuracy, and final_score; create a new test with data
@@ -65,6 +81,7 @@ def test(username):
 
     misses = sum(1 for a, b in zip(test_sentence.string, test_answer) if a != b)
     accuracy = round((((len(test_sentence.string)-misses)/(len(test_sentence.string)))*100), 1)
+    #score weight based on sentence length
     final_score = round((accuracy/final_time), 1)
     
     cprint("\n""      Test Results:      ""\n", attrs=["underline"])
@@ -72,8 +89,8 @@ def test(username):
     print(f"      time: {final_time}s")
     print(f"  accuracy: {accuracy}%")
     Test.create(test_answer, final_time, accuracy, final_score, user.id, test_sentence.id)
-    input("\n""Press ENTER to return to the menu...")
-    #cprint("\n"f"{page_break_tl}GAMENAME{page_break_tr}""\n", "light_magenta")
+    cprint("\n""Press ENTER to return to the menu...", "light_blue")
+    input("> ")
 
 # Display average scores of all users sorted best first
 def leaderboard():
@@ -98,10 +115,8 @@ def leaderboard():
         cprint(f"                        [{index}]. {user['username']}: Average Score: {round(user['avg_score'], 1)}", attrs=["bold"])
         index+=1
     cprint("\n"f"{page_break_bottom}""\n", "light_magenta")
-    print("Press ENTER to return to the menu...")
+    cprint("Press ENTER to return to the menu...", "light_blue")
     input("> ""\n")
-    #cprint(f"{page_break_tl}Placeholder{page_break_tr}""\n", "light_magenta")
-
 
 # Display the average stats and number of tests taken of the current user
 def profile(username):
@@ -118,17 +133,21 @@ def profile(username):
 
 # Prompt the user for a new username and update
 def change_name(username):
-    user = User.find_by_name(username)
-    new_name = input("\n" "Enter a new unique username: ")
+    current_user = User.find_by_name(username)
+    cprint("Enter a new unique username (Enter nothing to cancel): ", "light_blue")
+    new_name = input("> ")
+    if new_name == "":
+        return username
     users = User.get_all()
     for this_user in users:
         if this_user.name == new_name:
             cprint(f"Username {new_name} already taken", "red")
             return username
     user.name = new_name
-    user.update()
-    print(f"Username has been changed to: {user.name}")
+    current_user.update()
+    cprint(f"Username has been changed to: {user.name}", "light_green")
     return user.name
+    #cancelling breaks profile page...
 
 # Delete all previous tests of user.id
 def reset_stats(username):
@@ -146,7 +165,7 @@ def delete_user(username):
         user.delete()
         cprint("User Account Terminated", "red")
     else:
-        print("Action Cancelled")
+        cprint("Action Cancelled", "dark_grey")
 
 def exit_program():
     cprint("\n" "Shutting down testing chamber...", "red")

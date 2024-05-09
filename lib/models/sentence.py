@@ -17,7 +17,8 @@ class Sentence:
     @string.setter
     def string(self, string):
         if isinstance(string, str) and len(string):
-            self._string = string
+            if(not any(index.isdigit() for index in string)):
+                self._string = string
         else:
             raise ValueError(
                 "Name must be a non-empty string"
