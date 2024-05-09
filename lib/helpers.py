@@ -43,7 +43,7 @@ def begin_test(username):
 
 # List all current sentence instances
 def show_sentences():
-    cprint("\n""Saved sentences:", attrs=["underline"])
+    cprint("\n"f"{page_break_tl}SENTENCES{page_break_tr}""\n", "light_magenta")
     sentences = Sentence.get_all()
     for sentence in sentences:
         cprint(sentence.string)
@@ -78,11 +78,12 @@ def test(username):
     test_answer = input()
     end = time.time()
     final_time = round((end - start), 1)
-
     misses = sum(1 for a, b in zip(test_sentence.string, test_answer) if a != b)
     accuracy = round((((len(test_sentence.string)-misses)/(len(test_sentence.string)))*100), 1)
-    #score weight based on sentence length
-    final_score = round((accuracy/final_time), 1)
+    
+    #final score weight adjusted for sentence length: midpoint ~25 characters
+    final_score = accuracy/final_time
+    final_score = round(((final_score * (100+(len(test_sentence.string)*1.5)))/100), 1)
     
     cprint("\n""      Test Results:      ""\n", attrs=["underline"])
     print(f"     score: {final_score} points")

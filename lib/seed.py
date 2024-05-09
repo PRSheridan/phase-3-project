@@ -14,27 +14,19 @@ def seed_database():
     User.create_table()
 
     # Create seed data
-    Sentence.create("This is a test sentence")       #1
-    Sentence.create("This is another test sentence") #2
-    Sentence.create("I am a test sentence")          #3
-    Sentence.create("Testing a sentence")            #4
-    Sentence.create("Sentence tested")               #5
-
-    sheridan = User.create("sheridan")
-    sky = User.create("sky")
-    christian = User.create("christian")
-    charlie = User.create("charlie")
-    #sentence, time, accuracy, score, user, sentence
-    Test.create("This is a test sentence", 5, 90, 18, 1, 1)
-    Test.create("This is another test sentence", 6, 80, 13.3, 2, 2)
-    Test.create("I am a test sentence", 4, 80, 20, 2, 3)
-    Test.create("Testing a sentence", 5, 70, 14, 3, 4)
-    Test.create("Sentence tested", 6, 70, 11.6, 3, 5)
-    Test.create("This is a test sentence", 7, 80, 11.4, 3, 1)
-    Test.create("This is another test sentence", 5, 80, 16, 1, 2)
-    Test.create("I am a test sentence", 4, 90, 22.5, 2, 3)
-    Test.create("Testing a sentence", 5, 96, 19.2, 4, 4)
-    Test.create("Sentence tested", 5, 87, 17.4, 4, 5)
+    Sentence.create("Learning to code is fun and cool")
+    Sentence.create("Flatiron school is a great way to learn")
+    Sentence.create("Continuing education is exciting")
+    Sentence.create("Python is an object oriented programming language")
+    Sentence.create("React uses components to build user interfaces")
+    Sentence.create("To speak a language is to take on a world")
+    Sentence.create("Words give all things meaning")
+    Sentence.create("I do not want to go on the roof")
+    Sentence.create("I could watch that man play piano all day")
+    Sentence.create("The ability to speak does not make you intelligent")
+    Sentence.create("You will never find a more wretched hive of scum and villainy")
+    Sentence.create("I am one with the force and the force is with me")
+    Sentence.create("I have a bad feeling about this")
 
 seed_database()
 print("Seeded database")
