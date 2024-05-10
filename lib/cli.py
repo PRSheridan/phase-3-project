@@ -30,12 +30,12 @@ def main():
 #LOGIN SCREEN -------------------------------------------------------------------------
         if (logged_in == False):
             cprint("Initializing...", "dark_grey")
-            time.sleep(1)
+            time.sleep(.5)
             cprint("\n"f"{page_break_tl}Typewell{page_break_tr}""\n", "light_magenta")
             cprint(
                 '            Typewell is designed to test a subjects typing ability.'
                 '\n' '          Each test measures speed, and accuracy and provides the subject'
-                '\n' '          with a final score to be compared with others in the leaderboard.'
+                '\n' '          with a final wpm to be compared with others in the leaderboard.'
                 )
             cprint("\n" f"{page_break_bottom}", "light_magenta")
             menu(logged_in)
@@ -43,8 +43,9 @@ def main():
             if choice == "00":
                 exit_program()
             elif choice == "1":
-                username = login()
-                logged_in = True
+                data = login()
+                logged_in = data[0]
+                username = data[1]
 
 #MAIN MENU -----------------------------------------------------------------------------
         else:

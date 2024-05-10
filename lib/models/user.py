@@ -181,11 +181,12 @@ class User:
         for wpm in user_wpms:
             average = average + wpm
         return average/len(user_wpms)
-
-    def avg_score(self):
-        """Return the average score for all tests of the current user instance"""
-        average = 0
-        user_scores = [test.score for test in self.tests()]
-        for score in user_scores:
-            average = average + score
-        return average/len(user_scores)
+    
+    def record_wpm(self):
+        """Return the highest wpm for all tests of the current user instance"""
+        record = 0
+        user_wpms = [test.wpm for test in self.tests()]
+        for wpm in user_wpms:
+            if wpm > record:
+                record = wpm
+        return record

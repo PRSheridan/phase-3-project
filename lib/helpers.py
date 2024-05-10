@@ -13,22 +13,27 @@ page_break_tr = " |----------------------------------"
 
 # Prompt the user for a username: if not registered, create a new user: return username
 def login():
-    username = input("\n" "Enter your username: ")
-    if current_user := User.find_by_name(username):
+    data = [False, ""]
+    data[1] = input("\n" "Enter your username: ")
+    if current_user := User.find_by_name(data[1]):
         cprint("Initializing...", "dark_grey")
         time.sleep(.5)
-        print("\n"f'Welcome back, {username}.'"\n")
+        print("\n"f'Welcome back, {data[1]}.'"\n")
         time.sleep(1)
+        data[0] = True
+        return data
     else:
         try:
-            User.create(username)
+            User.create(data[1])
             cprint("Initializing...", "dark_grey")
-            time.sleep(.8)
-            print(f'New profile created, welcome {username}.')
+            time.sleep(.5)
+            print(f'New profile created, welcome {data[1]}.')
+            data[0] = True
+            return data
         except Exception as exc:
             print("Error creating new profile:", exc)
-    login = True
-    return username
+            data[0] = False
+            return data
 
 # Countdown to test, and initialize test instance
 def begin_test(username):
@@ -40,6 +45,8 @@ def begin_test(username):
     time.sleep(1)
     cprint("\n""GO""\n", "green")
     test(username)
+    cprint("\n""Press ENTER to return to the menu...", "light_blue")
+    input("> ")
 
 # List all current sentence instances
 def show_sentences():
@@ -66,37 +73,49 @@ def add_sentence():
         print("\n""Error creating new sentence:", exc)
 
 # Select a random test sentence, start a timer, prompt input, end timer 
-# Calculate final_time, accuracy, and final_score; create a new test with data
+# Calculate time, accuracy, and wpm; create a new test with data
 def test(username):
+    #intitialize test variables
     user = User.find_by_name(username)
     sentences = Sentence.get_all()
     test_sentence = sentences[random.randint(0, (len(sentences)-1))]
-    word_count = len(test_sentence.string.split())
-    cprint(f"{test_sentence.string}""\n", "yellow", attrs=["bold", "underline"])
+    test_string = test_sentence.string
+
+    #run test
+    cprint(f"{test_string}""\n", "yellow", attrs=["bold", "underline"])
     time.sleep(.2)
     start = time.time()
-    test_answer = input()
+    user_input = input()
     end = time.time()
-
-    final_time = round((end - start), 1)
-    misses = sum(1 for a, b in zip(test_sentence.string, test_answer) if a != b)
-    accuracy = round((((len(test_sentence.string)-misses)/(len(test_sentence.string)))*100), 1)
-    wpm = round(((word_count * 60)/final_time), 1)
+    test_time = round((end - start), 1)
     
-    #final score weight adjusted for sentence length: midpoint ~25 characters
-    final_score = accuracy/final_time
-    final_score = round(((final_score * (100+(len(test_sentence.string)*1.5)))/100), 1)
+    #calculate misses, accuracy, and wpm
+    test_string_length = len(test_string)
+    user_input_length = len(user_input)
+    if test_string_length > user_input_length:
+        diff = test_string_length - user_input_length
+        user_input += "#"*diff
+    elif user_input_length > test_string_length:
+        diff = user_input_length - test_string_length
+        test_string += "#"*diff
+    misses = sum(1 for a, b in zip(test_string, user_input) if a != b)
+    accuracy = round((((test_string_length-misses)/test_string_length)*100), 1)
+    wpm = round((((test_string_length/5)/(test_time/60))*(accuracy/100)), 1)
     
+    #display results
     cprint("\n""      Test Results:      ""\n", attrs=["underline"])
-    print(f"     score: {final_score} points")
-    print(f"       WPM: {wpm} WPM")
-    print(f"      time: {final_time}s")
+    if wpm > user.record_wpm():
+        print(wpm, user.record_wpm())
+        cprint(f"       WPM: {wpm} WPM (PB)", "light_yellow")
+    else:
+        cprint(f"       WPM: {wpm} WPM")
+    print(f"      time: {test_time}s")
     print(f"  accuracy: {accuracy}%")
-    Test.create(test_answer, final_time, accuracy, wpm, final_score, user.id, test_sentence.id)
-    cprint("\n""Press ENTER to return to the menu...", "light_blue")
-    input("> ")
 
-# Display average scores of all users sorted best first
+    #create Test instance with values
+    Test.create(user_input, test_time, accuracy, wpm, user.id, test_sentence.id)
+
+# Display average wpm of all users sorted best first
 def leaderboard():
     cprint("\n"f"{page_break_tl}LEADERBOARD{page_break_tr}""\n", "light_magenta")
     leaderboard_data = []
@@ -111,13 +130,12 @@ def leaderboard():
                 "avg_time": 999,
                 "avg_accuracy": 999,
                 "avg_wpm": 0,
-                "avg_score": 0
             })
 
-    sorted_data = sorted(leaderboard_data, key=lambda x: x['avg_score'], reverse = True)   
+    sorted_data = sorted(leaderboard_data, key=lambda x: x['avg_wpm'], reverse = True)   
     index = 1 
     for user in sorted_data:
-        cprint(f"                        [{index}]. {user['username']}: Average Score: {round(user['avg_score'], 1)}", attrs=["bold"])
+        cprint(f"                        [{index}]. {user['username']}: Average WPM: {round(user['avg_wpm'], 1)}", attrs=["bold"])
         index+=1
     cprint("\n"f"{page_break_bottom}""\n", "light_magenta")
     cprint("Press ENTER to return to the menu...", "light_blue")
@@ -130,7 +148,6 @@ def profile(username):
     if all_tests := Test.find_by_user_id(user.id):
         temp_stats = calculate_stats(username)
         cprint(f"                                 Tests taken: {temp_stats['total_tests']}"
-        '\n' f"                               Average score: {round(temp_stats['avg_score'], 1)}"
         '\n' f"                                 Average WPM: {round(temp_stats['avg_wpm'], 1)}"
         '\n' f"                                Average time: {round(temp_stats['avg_time'], 1)}"
         '\n' f"                            Average accuracy: {round(temp_stats['avg_accuracy'], 1)}""\n"
@@ -178,7 +195,7 @@ def exit_program():
     cprint("\n" "Shutting down testing chamber...", "red")
     exit()
 
-# Calculate average time, accuracy, and score for stats page: return a dict
+# Calculate average time, accuracy, and wpm for stats page: return a dict
 def calculate_stats(username):
     stats = {
         "username": username,
@@ -186,7 +203,6 @@ def calculate_stats(username):
         "avg_time": 0,
         "avg_accuracy": 0,
         "avg_wpm": 0,
-        "avg_score": 0
     }
  
     current_user = User.find_by_name(username)
@@ -194,5 +210,4 @@ def calculate_stats(username):
     stats["avg_time"] = current_user.avg_time()
     stats["avg_accuracy"] = current_user.avg_accuracy()
     stats["avg_wpm"] = current_user.avg_wpm()
-    stats["avg_score"] = current_user.avg_score()
     return stats
