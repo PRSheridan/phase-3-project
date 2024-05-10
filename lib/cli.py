@@ -116,7 +116,7 @@ def profile_menu():
     print("2. Reset statistics")
     print("3. Delete profile")
     cprint("\n""Press ENTER to return to the menu...", "light_blue")
-    cprint("\n"f"{page_break_bottom}""\n", "light_magenta")
+    cprint("\n"f"{page_break_bottom}", "light_magenta")
 
 #TEST MENU ------------------------------------------------------------------------------------
 def test_menu():
@@ -127,7 +127,7 @@ def test_menu():
     print("2. View sentences")
     print("3. Add a sentence")
     cprint("\n""Press ENTER to return to the menu...", "light_blue")
-    cprint("\n"f"{page_break_bottom}""\n", "light_magenta")
+    cprint("\n"f"{page_break_bottom}", "light_magenta")
 
 if __name__ == "__main__":
     main()

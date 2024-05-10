@@ -105,7 +105,6 @@ def test(username):
     #display results
     cprint("\n""      Test Results:      ""\n", attrs=["underline"])
     if wpm > user.record_wpm():
-        print(wpm, user.record_wpm())
         cprint(f"       WPM: {wpm} WPM (PB)", "light_yellow")
     else:
         cprint(f"       WPM: {wpm} WPM")
@@ -137,9 +136,9 @@ def leaderboard():
     for user in sorted_data:
         cprint(f"                        [{index}]. {user['username']}: Average WPM: {round(user['avg_wpm'], 1)}", attrs=["bold"])
         index+=1
-    cprint("\n"f"{page_break_bottom}""\n", "light_magenta")
-    cprint("Press ENTER to return to the menu...", "light_blue")
-    input("> ""\n")
+    cprint("\n""Press ENTER to return to the menu...", "light_blue")
+    cprint("\n"f"{page_break_bottom}", "light_magenta")
+    input("")
 
 # Display the average stats and number of tests taken of the current user
 def profile(username):
@@ -158,20 +157,19 @@ def profile(username):
 # Prompt the user for a new username and update
 def change_name(username):
     current_user = User.find_by_name(username)
+    all_users = User.get_all()
     cprint("Enter a new unique username (Enter nothing to cancel): ", "light_blue")
     new_name = input("> ")
     if new_name == "":
         return username
-    users = User.get_all()
-    for this_user in users:
-        if this_user.name == new_name:
+    for user in all_users:
+        if user.name == new_name:
             cprint(f"Username {new_name} already taken", "red")
             return username
-    user.name = new_name
+    current_user.name = new_name
     current_user.update()
-    cprint(f"Username has been changed to: {user.name}", "light_green")
-    return user.name
-    #cancelling breaks profile page...
+    cprint(f"Username has been changed to: {current_user.name}", "light_green")
+    return new_name
 
 # Delete all previous tests of user.id
 def reset_stats(username):
