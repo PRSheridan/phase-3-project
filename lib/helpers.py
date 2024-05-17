@@ -171,6 +171,7 @@ def change_name(username):
     cprint(f"Username has been changed to: {current_user.name}", "light_green")
     return new_name
 
+# Prompt for test index and display test stats
 def history(username):
     current_user = User.find_by_name(username)
     if tests := current_user.tests():
