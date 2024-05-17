@@ -173,9 +173,23 @@ def change_name(username):
 
 def history(username):
     current_user = User.find_by_name(username)
-    tests = current_user.tests()
-    for test in tests:
-        print(test.id)
+    if tests := current_user.tests():
+        print(f"You have {len(tests)} tests on record."
+        '\n' f"Input a number between 1 and {len(tests)} to view test results: ")
+        choice = input("> ")
+        if 1 <= int(choice) <= len(tests):
+            test = Test.find_by_id(int(choice))
+            sentence = Sentence.find_by_id(test.sentence_id_)
+            cprint('\n'f"Test {choice}",attrs=["underline"])
+            cprint(f"Sentence:   {sentence.string}"
+            '\n' f"User Input: {test.user_input}"
+            '\n''\n' f"WPM: ------ {test.wpm}"
+            '\n' f"Time: ----- {test.time}"
+            '\n' f"Accuracy: - {test.accuarcy}",attrs=["bold"])
+        else:
+            cprint(f"Test index out of range.", "red")
+    else:
+        cprint(f"No stats found.", "red")
 
     cprint("\n""Press ENTER to return to the menu...", "light_blue")
     input("> ")
