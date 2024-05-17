@@ -11,6 +11,7 @@ from helpers import (
     leaderboard,
     profile,
     change_name,
+    history,
     reset_stats,
     delete_user
 )
@@ -46,6 +47,8 @@ def main():
                 data = login()
                 logged_in = data[0]
                 username = data[1]
+            else:
+                cprint("Invalid choice.", "red")
 
 #MAIN MENU -----------------------------------------------------------------------------
         else:
@@ -73,7 +76,7 @@ def main():
             elif choice == "2":
                 leaderboard()
 
-###STATS MENU ------------------------------------
+###PROFILE MENU ------------------------------------
             elif choice == "3":
                 profile(username)
                 profile_menu()
@@ -81,8 +84,10 @@ def main():
                 if(choice == "1"):
                     username = change_name(username)
                 elif(choice == "2"):
-                    reset_stats(username)
+                    history(username)
                 elif(choice == "3"):
+                    reset_stats(username)
+                elif(choice == "4"):
                     delete_user(username)
                     logged_in = False
                     username = None
@@ -109,12 +114,13 @@ def menu(logged_in):
         print("00. Quit")
         cprint("\n"f"{page_break_bottom}", "light_magenta")
 
-#STATS MENU ----------------------------------------------------------------------------------
+#PROFILE MENU ----------------------------------------------------------------------------------
 def profile_menu():
     cprint("Select an option below:" "\n", "light_blue")
     print("1. Change username")
-    print("2. Reset statistics")
-    print("3. Delete profile")
+    print("2. View history")
+    print("3. Reset statistics")
+    print("4. Delete profile")
     cprint("\n""Press ENTER to return to the menu...", "light_blue")
     cprint("\n"f"{page_break_bottom}", "light_magenta")
 
