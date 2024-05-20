@@ -191,13 +191,13 @@ def history(username):
         choice = input("> ")
         if 1 <= int(choice) <= len(tests):
             test = Test.find_by_id(int(choice))
-            sentence = Sentence.find_by_id(test.sentence_id_)
+            sentence = Sentence.find_by_id(test.sentence_id)
             cprint('\n'f"Test {choice}",attrs=["underline"])
             cprint(f"Sentence:   {sentence.string}"
             '\n' f"User Input: {test.user_input}"
             '\n''\n' f"WPM: ------ {test.wpm}"
             '\n' f"Time: ----- {test.time}"
-            '\n' f"Accuracy: - {test.accuarcy}",attrs=["bold"])
+            '\n' f"Accuracy: - {test.accuracy}",attrs=["bold"])
         else:
             cprint(f"Test index out of range.", "red")
     else:
@@ -331,4 +331,37 @@ def user_admin_menu():
         cprint("Invalid choice.", "red")
 
 def test_admin_menu():
-    pass
+    cprint("Select an option below:" "\n", "light_green")
+    print("1. View all tests")
+    print("2. View tests by user")
+    print("3. Edit test")
+    print("4. Create test")
+    print("5. Delete all tests")
+    cprint("\n""Press ENTER to return to the menu...", "light_green")
+    cprint("\n"f"{page_break_bottom}", "light_magenta")
+
+    choice = input("> ")
+    if choice == "1":
+        for test in Test.get_all():
+            sentence = Sentence.find_by_id(test.sentence_id)
+            cprint('\n'f"Test {test.id}",attrs=["underline"])
+            cprint(f"Sentence:   {sentence.string}"
+            '\n' f"User Input: {test.user_input}"
+            '\n''\n' f"WPM: ------ {test.wpm}"
+            '\n' f"Time: ----- {test.time}"
+            '\n' f"Accuracy: - {test.accuracy}",attrs=["bold"])
+        cprint("\n""Press ENTER to return to the menu...", "light_green")
+        input("> ")
+
+    elif choice == "2":
+        pass
+    elif choice == "3":
+        pass
+    elif choice == "4":
+        pass
+    elif choice == "5":
+        pass
+    elif choice == "":
+        cprint("Returning to menu...", "dark_grey")
+    else:
+        cprint("Invalid choice.", "red")

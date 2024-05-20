@@ -124,13 +124,13 @@ def menu(logged_in, admin):
     else:
         cprint(f"{page_break_tl}Typewell{page_break_tr}""\n", "light_magenta")
         cprint("Select an option below:" "\n", "light_blue")
-        if(admin == True):
-            cprint("admin. Admin Console", "light_green")
         print("1. Test")
         print("2. Leaderboard")
         print("3. Profile")
         print("0. Logout")
         print("00. Quit")
+        if(admin == True):
+            cprint("\n""admin. Admin Console", "light_green")
         cprint("\n"f"{page_break_bottom}", "light_magenta")
 
 #PROFILE MENU ----------------------------------------------------------------------------------
