@@ -5,13 +5,13 @@ from models.sentence import Sentence
 class Test:
     all = {}
 
-    def __init__(self, user_input, time, accuracy, wpm, user_id_, sentence_id_,):
+    def __init__(self, user_input, time, accuracy, wpm, user_id, sentence_id,):
         self.user_input = user_input
         self.time = time
         self.accuracy = accuracy
         self.wpm = wpm
-        self.user_id_ = user_id_
-        self.sentence_id_ = sentence_id_
+        self.user_id = user_id
+        self.sentence_id = sentence_id
 
     def __repr__(self):
         pass
@@ -26,10 +26,10 @@ class Test:
             time INTEGER,
             accuracy INTEGER,
             wpm INTEGER,
-            user_id_ INTEGER,
-            sentence_id_ INTEGER,
-            FOREIGN KEY (user_id_) REFERENCES users(id),
-            FOREIGN KEY (sentence_id_) REFERENCES sentences(id))
+            user_id INTEGER,
+            sentence_id INTEGER,
+            FOREIGN KEY (user_id) REFERENCES users(id),
+            FOREIGN KEY (sentence_id) REFERENCES sentences(id))
         """
         CURSOR.execute(sql)
         CONN.commit()
@@ -48,11 +48,11 @@ class Test:
         Update object id attribute using the primary key value of new row.
         Save the object in local dictionary using table row's PK as dictionary key"""
         sql = """
-                INSERT INTO tests (user_input, time, accuracy, wpm, user_id_, sentence_id_)
+                INSERT INTO tests (user_input, time, accuracy, wpm, user_id, sentence_id)
                 VALUES (?, ?, ?, ?, ?, ?)
         """
 
-        CURSOR.execute(sql, (self.user_input, self.time, self.accuracy, self.wpm, self.user_id_, self.sentence_id_,))
+        CURSOR.execute(sql, (self.user_input, self.time, self.accuracy, self.wpm, self.user_id, self.sentence_id,))
         CONN.commit()
 
         self.id = CURSOR.lastrowid
@@ -62,10 +62,10 @@ class Test:
         """Update the table row corresponding to the current Test instance."""
         sql = """
             UPDATE tests
-            SET user_input = ?, time = ?, accuracy = ?, wpm = ?, user_id_ = ?, sentence_id_ = ?
+            SET user_input = ?, time = ?, accuracy = ?, wpm = ?, user_id = ?, sentence_id = ?
             WHERE id = ?
         """
-        CURSOR.execute(sql, (self.user_input, self.time, self.accuracy, self.wpm, self.user_id_, self.sentence_id_,))
+        CURSOR.execute(sql, (self.user_input, self.time, self.accuracy, self.wpm, self.user_id, self.sentence_id,))
         CONN.commit()
 
     def delete(self):
@@ -87,9 +87,9 @@ class Test:
         self.id = None
 
     @classmethod
-    def create(cls, user_input, time, accuracy, wpm, user_id_, sentence_id_):
+    def create(cls, user_input, time, accuracy, wpm, user_id, sentence_id):
         """ Initialize a new Test instance and save the object to the database """
-        test = cls(user_input, time, accuracy, wpm, user_id_, sentence_id_)
+        test = cls(user_input, time, accuracy, wpm, user_id, sentence_id)
         test.save()
         return test
 
@@ -105,8 +105,8 @@ class Test:
             test.time = row[2]
             test.accuarcy = row[3]
             test.wpm = row[4]
-            test.user_id_ = row[5]
-            test.sentence_id_ = row[6]
+            test.user_id = row[5]
+            test.sentence_id = row[6]
         else:
             # not in dictionary, create new instance and add to dictionary
             test = cls(row[1], row[2], row[3], row[4], row[5], row[6])
@@ -139,14 +139,14 @@ class Test:
         return cls.instance_from_db(row) if row else None
 
     @classmethod
-    def find_by_user_id(cls, user_id_):
+    def find_by_user_id(cls, user_id):
         """Return Test object corresponding to the table row matching the specified primary key"""
         sql = """
             SELECT *
             FROM tests
-            WHERE user_id_ = ?
+            WHERE user_id = ?
         """
 
-        rows = CURSOR.execute(sql, (user_id_,)).fetchall()
+        rows = CURSOR.execute(sql, (user_id,)).fetchall()
         return [cls.instance_from_db(row) for row in rows]
 

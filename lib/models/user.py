@@ -3,9 +3,10 @@ from models.__init__ import CURSOR, CONN
 class User:
     all = {}
 
-    def __init__(self, name, id = None):
+    def __init__(self, name, role, id = None):
         self.id = id
         self.name = name
+        self.role = role
 
     def __repr__(self):
         pass
@@ -22,6 +23,19 @@ class User:
             raise ValueError(
                 "Name must be a non-empty string"
             )
+    
+    @property
+    def role(self):
+        return self._role
+
+    @role.setter
+    def role(self, role):
+        if role == "admin" or role == "basic": 
+            self._role = role
+        else:
+            raise ValueError(
+                "role must be admin OR basic"
+            )
 
     #Methods
     @classmethod
@@ -30,7 +44,8 @@ class User:
         sql = """
             CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY,
-            name TEXT)
+            name TEXT,
+            role STRING)
         """
         CURSOR.execute(sql)
         CONN.commit()
@@ -45,15 +60,15 @@ class User:
         CONN.commit()
 
     def save(self):
-        """ Insert a new row with the name, job title, and department id values of the current User object.
+        """ Insert a new row with the name, and role values of the current User object.
         Update object id attribute using the primary key value of new row.
         Save the object in local dictionary using table row's PK as dictionary key"""
         sql = """
-                INSERT INTO users (name)
-                VALUES (?)
+                INSERT INTO users (name, role)
+                VALUES (?, ?)
         """
 
-        CURSOR.execute(sql, (self.name,))
+        CURSOR.execute(sql, (self.name, self.role,))
         CONN.commit()
 
         self.id = CURSOR.lastrowid
@@ -63,10 +78,10 @@ class User:
         """Update the table row corresponding to the current User instance."""
         sql = """
             UPDATE users
-            SET name = ?
+            SET name = ?, role = ?
             WHERE id = ?
         """
-        CURSOR.execute(sql, (self.name, self.id))
+        CURSOR.execute(sql, (self.name, self.role, self.id))
         CONN.commit()
 
     def delete(self):
@@ -88,9 +103,9 @@ class User:
         self.id = None
 
     @classmethod
-    def create(cls, name):
+    def create(cls, name, role):
         """ Initialize a new User instance and save the object to the database """
-        user = cls(name)
+        user = cls(name, role)
         user.save()
         return user
 
@@ -103,9 +118,10 @@ class User:
         if user:
             # ensure attributes match row values in case local instance was modified
             user.name = row[1]
+            user.role = row[2]
         else:
             # not in dictionary, create new instance and add to dictionary
-            user = cls(row[1])
+            user = cls(row[1], row[2])
             user.id = row[0]
             cls.all[user.id] = user
         return user
@@ -152,7 +168,7 @@ class User:
         sql = """
             SELECT *
             FROM tests
-            WHERE user_id_ is ?
+            WHERE user_id is ?
         """
 
         rows = CURSOR.execute(sql, (self.id,)).fetchall()

@@ -13,26 +13,37 @@ page_break_tr = " |----------------------------------"
 
 # Prompt the user for a username: if not registered, create a new user: return username
 def login():
-    data = [False, ""]
-    data[1] = input("\n" "Enter your username: ")
-    if current_user := User.find_by_name(data[1]):
+    # 0LOGGED_IN, 1ADMIN, 2USERNAME
+    data = [False, "", ""]
+    data[2] = input("\n" "Enter your username: ")
+    if current_user := User.find_by_name(data[2]):
         cprint("Initializing...", "dark_grey")
         time.sleep(.5)
-        print("\n"f'Welcome back, {data[1]}.'"\n")
+        print("\n"f'Welcome back, {data[2]}.'"\n")
         time.sleep(1)
+        if current_user.role == 'admin':
+            data[1] = True
+        else:
+            data[1] = False
         data[0] = True
         return data
     else:
         try:
-            User.create(data[1])
+            if "adm_" in data[2]:
+                User.create(data[2], "admin")
+                print(f'New ADMIN profile created, welcome {data[2]}.')
+                data[0] = True
+                data[1] = True
+                return data
+            else:
+                User.create(data[2], "basic")
+                print(f'New profile created, welcome {data[2]}.')
+                data[0] = True
+                return data
             cprint("Initializing...", "dark_grey")
             time.sleep(.5)
-            print(f'New profile created, welcome {data[1]}.')
-            data[0] = True
-            return data
         except Exception as exc:
             print("Error creating new profile:", exc)
-            data[0] = False
             return data
 
 # List all current sentence instances
@@ -233,3 +244,91 @@ def calculate_stats(username):
     stats["avg_accuracy"] = current_user.avg_accuracy()
     stats["avg_wpm"] = current_user.avg_wpm()
     return stats
+
+
+#ADMIN CONSOLE ------------------------------------------------------------------------------------------
+def user_admin_menu():
+    cprint("Select an option below:" "\n", "light_green")
+    print("1. View users")
+    print("2. Edit user")
+    print("3. Create user")
+    print("4. Delete user")
+    cprint("\n""Press ENTER to return to the menu...", "light_green")
+    cprint("\n"f"{page_break_bottom}", "light_magenta")
+
+    choice = input("> ")
+    if choice == "1":
+        cprint("\n"f"{page_break_tl}USERS{page_break_tr}""\n", "light_magenta")
+        for user in User.get_all():
+            cprint(f"{user.id}. {user.name} ({user.role})")
+        cprint("\n""Press ENTER to return to the menu...", "light_green")
+        input("> ""\n")
+
+    elif choice == "2":
+        cprint("Enter the username below: ", "light_green")
+        temp = input("> ")
+        if current_user := User.find_by_name(temp):
+            cprint(f"Select an option for {current_user.name} below:" "\n", "light_green")
+            print("1. Change username")
+            print("2. Change role")
+            cprint("\n""Press ENTER to return to the menu...", "light_green")
+            temp = input("> ")
+            if temp == "1":
+                print("Enter the new username below: ")
+                temp = input("> ")
+                change_name(current_user.name)
+            elif temp == "2":
+                cprint(f"Select a role for {current_user.name} below:" "\n", "light_green")
+                print("1. basic")
+                print("2. admin")
+                cprint("\n""Press ENTER to return to the menu...", "light_green")
+                temp = input("> ")
+                if temp == "1":
+                    current_user.role = "basic"
+                    current_user.update()
+                if temp == "2":
+                    current_user.role = "admin"
+                    current_user.update()
+                elif choice == "":
+                    cprint("Returning to menu...", "dark_grey")
+                else:
+                    cprint("Invalid choice.", "red")
+        else:
+            cprint("User does not exist.", "red")
+
+    elif choice == "3":
+        data = ["", ""]
+        cprint(f"Enter a unique username below:" "\n", "light_green")
+        data[0] = input("> ")
+        cprint(f"Select a role for {data[0]} below:" "\n", "light_green")
+        print("1. basic")
+        print("2. admin")
+        temp = input("> ")
+        if temp == "1":
+            data[1] = "basic"
+        if temp == "2":
+            data[1] = "admin"
+        else:
+            cprint("Invalid choice.", "red")
+        User.create(data[0], data[1])
+
+    elif choice == "4":
+        cprint("Enter the username below: ", "light_green")
+        temp = input("> ")
+        if current_user := User.find_by_name(temp):
+            confirm = input("\n" "Type Y/N to confirm deletion: ")
+            if confirm == "Y":
+                current_user.delete()
+                cprint("User account terminated", "red")
+            else:
+                cprint("Action cancelled", "dark_grey")
+        else:
+            cprint("User does not exist.", "red")
+
+    elif choice == "":
+        cprint("Returning to menu...", "dark_grey")
+    else:
+        cprint("Invalid choice.", "red")
+
+def test_admin_menu():
+    pass
