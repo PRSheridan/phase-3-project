@@ -31,12 +31,16 @@ def login():
         try:
             if "adm_" in data[2]:
                 User.create(data[2], "admin")
+                cprint("Initializing...", "dark_grey")
+                time.sleep(.5)
                 print(f'New ADMIN profile created, welcome {data[2]}.')
                 data[0] = True
                 data[1] = True
                 return data
             else:
                 User.create(data[2], "basic")
+                cprint("Initializing...", "dark_grey")
+                time.sleep(.5)
                 print(f'New profile created, welcome {data[2]}.')
                 data[0] = True
                 return data
@@ -262,7 +266,6 @@ def user_admin_menu():
     print("4. Delete user")
     cprint("\n""Press ENTER to return to the menu...", "light_green")
     cprint("\n"f"{page_break_bottom}", "light_magenta")
-
     choice = input("> ")
     if choice == "1":
         cprint("\n"f"{page_break_tl}USERS{page_break_tr}""\n", "light_magenta")
@@ -270,7 +273,6 @@ def user_admin_menu():
             cprint(f"{user.id}. {user.name} ({user.role})")
         cprint("\n""Press ENTER to return to the menu...", "light_green")
         input("> ""\n")
-
     elif choice == "2":
         cprint("Enter the username below: ", "light_green")
         if current_user := User.find_by_name(input("> ")):
@@ -299,7 +301,6 @@ def user_admin_menu():
                     cprint("Invalid choice.", "red")
         else:
             cprint("User does not exist.", "red")
-
     elif choice == "3":
         data = ["", ""]
         cprint(f"Enter a unique username below:" "\n", "light_green")
@@ -323,7 +324,6 @@ def user_admin_menu():
                 cprint("Returning to menu...", "dark_grey")
             else:
                 cprint("Invalid choice.", "red")
-
     elif choice == "4":
         cprint("Enter the username below: ", "light_green")
         if current_user := User.find_by_name(input("> ")):
@@ -334,7 +334,7 @@ def user_admin_menu():
             else:
                 cprint("Action cancelled", "dark_grey")
         else:
-            cprint("User does not exist.", "red")
+            cprint("User does not exist. Returning to menu...", "red")
 
     elif choice == "":
         cprint("Returning to menu...", "dark_grey")
@@ -347,7 +347,7 @@ def test_admin_menu():
     print("2. View tests by user")
     print("3. Edit test")
     print("4. Create test")
-    print("5. Delete all tests")
+    print("5. Delete test")
     cprint("\n""Press ENTER to return to the menu...", "light_green")
     cprint("\n"f"{page_break_bottom}", "light_magenta")
     choice = input("> ")
@@ -363,7 +363,6 @@ def test_admin_menu():
             '\n' f"Accuracy: - {test.accuracy}",attrs=["bold"])
         cprint("\n""Press ENTER to return to the menu...", "light_green")
         input("> ")
-
     elif choice == "2":
         cprint("Enter the username below: ", "light_green")
         if current_user := User.find_by_name(input("> ")):
@@ -377,7 +376,6 @@ def test_admin_menu():
                 '\n' f"Accuracy: - {test.accuracy}",attrs=["bold"])
             cprint("\n""Press ENTER to return to the menu...", "light_green")
             input("> ")
-
     elif choice == "3":
         cprint("Enter the test ID below: ", "light_green")
         if test := Test.find_by_id(input("> ")):
@@ -389,7 +387,6 @@ def test_admin_menu():
             cprint("\n""Press ENTER to return to the menu...", "light_green")
             cprint("\n"f"{page_break_bottom}", "light_magenta")
             choice = input("> ")
-
             if choice == "1":
                 cprint("Enter the new wpm value below: ", "light_green")
                 test.wpm = input("> ")
@@ -410,7 +407,8 @@ def test_admin_menu():
                 test.user_id = input("> ")
                 test.update()
                 cprint(f"Test {test.id} user ID set to {test.user_id}.", "light_green")
-            
+        else:
+            cprint(f"Test does not exist. Returning to menu...", "red")
     elif choice == "4":
         test_temp = ["", "", "", "", "", ""]
         cprint("Enter the time value below: ", "light_green")
@@ -426,23 +424,27 @@ def test_admin_menu():
         cprint(f"Sentence: {Sentence.find_by_id(test_temp[4]).string}", "light_green")
         cprint("Enter the user input value below: ", "light_green")
         test_temp[5] = input("> ")
-        #try:
-        test = Test.create(test_temp[5], test_temp[0], test_temp[1], test_temp[2], test_temp[3], test_temp[4])
-        sentence = Sentence.find_by_id(test.sentence_id)
-        current_user = User.find_by_id(test.user_id)
-        cprint('\n'f"Test created: ",attrs=["underline"])
-        cprint(f"Sentence:   {sentence.string}"
-        '\n' f"User Input: {test.user_input}"
-        '\n''\n' f"WPM: ------ {test.wpm}"
-        '\n' f"Time: ----- {test.time}"
-        '\n' f"Accuracy: - {test.accuracy}",attrs=["bold"])
-        cprint("\n""Press ENTER to return to the menu...", "light_green")
-        input("> ")
-        #except Exception as exc:
-        #    print("Error creating new test:", exc)
-
+        try:
+            test = Test.create(test_temp[5], test_temp[0], test_temp[1], test_temp[2], test_temp[3], test_temp[4])
+            sentence = Sentence.find_by_id(test.sentence_id)
+            current_user = User.find_by_id(test.user_id)
+            cprint('\n'f"Test created: ",attrs=["underline"])
+            cprint(f"Sentence:   {sentence.string}"
+            '\n' f"User Input: {test.user_input}"
+            '\n''\n' f"WPM: ------ {test.wpm}"
+            '\n' f"Time: ----- {test.time}"
+            '\n' f"Accuracy: - {test.accuracy}",attrs=["bold"])
+            cprint("\n""Press ENTER to return to the menu...", "light_green")
+            input("> ")
+        except Exception as exc:
+            print("Error creating new test:", exc)
     elif choice == "5":
-        pass
+        cprint("Enter the test ID below: ", "light_green")
+        if test := Test.find_by_id(input("> ")):
+            test.delete()
+            cprint("Test Deleted", "light_green")
+        else:
+            cprint(f"Test does not exist. Returning to menu...", "red")
     elif choice == "":
         cprint("Returning to menu...", "dark_grey")
     else:

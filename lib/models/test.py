@@ -22,8 +22,12 @@ class Test:
 
     @user_input.setter
     def user_input(self, user_input):
-        self._user_input = user_input
-
+        if isinstance(user_input, str)
+            self._user_input = user_input
+        else:
+            raise ValueError(
+                "Input must be a string."
+            )
     @property
     def time(self):
         return self._time
@@ -54,7 +58,12 @@ class Test:
 
     @user_id.setter
     def user_id(self, user_id):
-        self._user_id = user_id
+        if isinstance(user_id, int):
+            self._user_id = user_id
+        else:
+            raise ValueError(
+                "User ID must be an integer."
+            )
 
     @property
     def sentence_id(self):
@@ -62,7 +71,12 @@ class Test:
 
     @sentence_id.setter
     def sentence_id(self, sentence_id):
-        self._sentence_id = sentence_id
+        if isinstance(sentence_id, int):
+            self._sentence_id = sentence_id
+        else:
+            raise ValueError(
+                "Sentence ID must be an integer."
+            )
 
     @classmethod
     def create_table(cls):
