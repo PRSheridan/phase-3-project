@@ -16,6 +16,54 @@ class Test:
     def __repr__(self):
         pass
 
+    @property
+    def user_input(self):
+        return self._user_input
+
+    @user_input.setter
+    def user_input(self, user_input):
+        self._user_input = user_input
+
+    @property
+    def time(self):
+        return self._time
+
+    @time.setter
+    def time(self, time):
+        self._time = time
+
+    @property
+    def accuracy(self):
+        return self._accuracy
+
+    @accuracy.setter
+    def accuracy(self, accuracy):
+        self._accuracy = accuracy
+
+    @property
+    def wpm(self):
+        return self._wpm
+
+    @wpm.setter
+    def wpm(self, wpm):
+        self._wpm = wpm
+
+    @property
+    def user_id(self):
+        return self._user_id
+
+    @user_id.setter
+    def user_id(self, user_id):
+        self._user_id = user_id
+
+    @property
+    def sentence_id(self):
+        return self._sentence_id
+
+    @sentence_id.setter
+    def sentence_id(self, sentence_id):
+        self._sentence_id = sentence_id
+
     @classmethod
     def create_table(cls):
         """ Create a new table to persist the attributes of Test instances """
@@ -52,7 +100,7 @@ class Test:
                 VALUES (?, ?, ?, ?, ?, ?)
         """
 
-        CURSOR.execute(sql, (self.user_input, self.time, self.accuracy, self.wpm, self.user_id, self.sentence_id,))
+        CURSOR.execute(sql, (self.user_input, self.time, self.accuracy, self.wpm, self.user_id, self.sentence_id))
         CONN.commit()
 
         self.id = CURSOR.lastrowid
@@ -65,7 +113,7 @@ class Test:
             SET user_input = ?, time = ?, accuracy = ?, wpm = ?, user_id = ?, sentence_id = ?
             WHERE id = ?
         """
-        CURSOR.execute(sql, (self.user_input, self.time, self.accuracy, self.wpm, self.user_id, self.sentence_id,))
+        CURSOR.execute(sql, (self.user_input, self.time, self.accuracy, self.wpm, self.user_id, self.sentence_id, self.id))
         CONN.commit()
 
     def delete(self):

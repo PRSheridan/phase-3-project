@@ -100,10 +100,17 @@ def test(username):
     test_time = round((end - start), 1)
     
     # Calculate statistics
-    # Split by word, compare words length and add # for each missing/extra letter
+    # Split by word, add placeholder for missing words,
+    # compare words length and add # for each missing/extra letter.
     test_string_length = len(test_string)
     test_words = test_string.split(" ")
     user_words = user_input.split(" ")
+    if len(test_words) > len(user_words):
+        for i in range((len(test_words)-len(user_words))):
+            user_words.append("#")
+    elif len(test_words) < len(user_words):
+        for i in range((len(user_words)-len(test_words))):
+            user_words.append("#")
     for i in range(len(test_words)):
         if len(test_words[i]) > len(user_words[i]):
             user_words[i] += "#"*(len(test_words[i]) - len(user_words[i]))
@@ -266,8 +273,7 @@ def user_admin_menu():
 
     elif choice == "2":
         cprint("Enter the username below: ", "light_green")
-        temp = input("> ")
-        if current_user := User.find_by_name(temp):
+        if current_user := User.find_by_name(input("> ")):
             cprint(f"Select an option for {current_user.name} below:" "\n", "light_green")
             print("1. Change username")
             print("2. Change role")
@@ -320,8 +326,7 @@ def user_admin_menu():
 
     elif choice == "4":
         cprint("Enter the username below: ", "light_green")
-        temp = input("> ")
-        if current_user := User.find_by_name(temp):
+        if current_user := User.find_by_name(input("> ")):
             confirm = input("\n" "Type Y/N to confirm deletion: ")
             if confirm == "Y":
                 current_user.delete()
@@ -345,7 +350,6 @@ def test_admin_menu():
     print("5. Delete all tests")
     cprint("\n""Press ENTER to return to the menu...", "light_green")
     cprint("\n"f"{page_break_bottom}", "light_magenta")
-
     choice = input("> ")
     if choice == "1":
         for test in Test.get_all():
@@ -361,11 +365,82 @@ def test_admin_menu():
         input("> ")
 
     elif choice == "2":
-        pass
+        cprint("Enter the username below: ", "light_green")
+        if current_user := User.find_by_name(input("> ")):
+            for test in current_user.tests():
+                sentence = Sentence.find_by_id(test.sentence_id)
+                cprint('\n'f"Test {test.id}: {current_user.name}",attrs=["underline"])
+                cprint(f"Sentence:   {sentence.string}"
+                '\n' f"User Input: {test.user_input}"
+                '\n''\n' f"WPM: ------ {test.wpm}"
+                '\n' f"Time: ----- {test.time}"
+                '\n' f"Accuracy: - {test.accuracy}",attrs=["bold"])
+            cprint("\n""Press ENTER to return to the menu...", "light_green")
+            input("> ")
+
     elif choice == "3":
-        pass
+        cprint("Enter the test ID below: ", "light_green")
+        if test := Test.find_by_id(input("> ")):
+            cprint(f"Select an option for test {test.id} below:" "\n", "light_green")
+            print("1. Change WPM")
+            print("2. Change time")
+            print("3. Change accuracy")
+            print("4. Change user")
+            cprint("\n""Press ENTER to return to the menu...", "light_green")
+            cprint("\n"f"{page_break_bottom}", "light_magenta")
+            choice = input("> ")
+
+            if choice == "1":
+                cprint("Enter the new wpm value below: ", "light_green")
+                test.wpm = input("> ")
+                test.update()
+                cprint(f"Test {test.id} wpm set to {test.wpm}.", "light_green")
+            if choice == "2":
+                cprint("Enter the new time value below: ", "light_green")
+                test.time = input("> ")
+                test.update()
+                cprint(f"Test {test.id} time set to {test.time}.", "light_green")
+            if choice == "3":
+                cprint("Enter the new accuracy value below: ", "light_green")
+                test.accuracy = input("> ")
+                test.update()
+                cprint(f"Test {test.id} accuracy set to {test.accuracy}.", "light_green")
+            if choice == "4":
+                cprint("Enter the new user ID below: ", "light_green")
+                test.user_id = input("> ")
+                test.update()
+                cprint(f"Test {test.id} user ID set to {test.user_id}.", "light_green")
+            
     elif choice == "4":
-        pass
+        test_temp = ["", "", "", "", "", ""]
+        cprint("Enter the time value below: ", "light_green")
+        test_temp[0] = input("> ")
+        cprint("Enter the accuracy value below: ", "light_green")
+        test_temp[1] = input("> ")
+        cprint("Enter the wpm value below: ", "light_green")
+        test_temp[2] = input("> ")
+        cprint("Enter the user ID value below: ", "light_green")
+        test_temp[3] = input("> ")
+        cprint("Enter the sentence ID value below: ", "light_green")
+        test_temp[4] = input("> ")
+        cprint(f"Sentence: {Sentence.find_by_id(test_temp[4]).string}", "light_green")
+        cprint("Enter the user input value below: ", "light_green")
+        test_temp[5] = input("> ")
+        #try:
+        test = Test.create(test_temp[5], test_temp[0], test_temp[1], test_temp[2], test_temp[3], test_temp[4])
+        sentence = Sentence.find_by_id(test.sentence_id)
+        current_user = User.find_by_id(test.user_id)
+        cprint('\n'f"Test created: ",attrs=["underline"])
+        cprint(f"Sentence:   {sentence.string}"
+        '\n' f"User Input: {test.user_input}"
+        '\n''\n' f"WPM: ------ {test.wpm}"
+        '\n' f"Time: ----- {test.time}"
+        '\n' f"Accuracy: - {test.accuracy}",attrs=["bold"])
+        cprint("\n""Press ENTER to return to the menu...", "light_green")
+        input("> ")
+        #except Exception as exc:
+        #    print("Error creating new test:", exc)
+
     elif choice == "5":
         pass
     elif choice == "":
