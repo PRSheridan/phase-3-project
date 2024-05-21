@@ -174,6 +174,7 @@ class User:
         rows = CURSOR.execute(sql, (self.id,)).fetchall()
         return [Test.instance_from_db(row) for row in rows]
 
+# These would realistically be in the helpers front-end
     def avg_time(self):
         """Return the average time for all tests of the current user instance"""
         average = 0

@@ -274,8 +274,6 @@ def user_admin_menu():
             cprint("\n""Press ENTER to return to the menu...", "light_green")
             temp = input("> ")
             if temp == "1":
-                print("Enter the new username below: ")
-                temp = input("> ")
                 change_name(current_user.name)
             elif temp == "2":
                 cprint(f"Select a role for {current_user.name} below:" "\n", "light_green")
@@ -286,7 +284,7 @@ def user_admin_menu():
                 if temp == "1":
                     current_user.role = "basic"
                     current_user.update()
-                if temp == "2":
+                elif temp == "2":
                     current_user.role = "admin"
                     current_user.update()
                 elif choice == "":
@@ -300,17 +298,25 @@ def user_admin_menu():
         data = ["", ""]
         cprint(f"Enter a unique username below:" "\n", "light_green")
         data[0] = input("> ")
-        cprint(f"Select a role for {data[0]} below:" "\n", "light_green")
-        print("1. basic")
-        print("2. admin")
-        temp = input("> ")
-        if temp == "1":
-            data[1] = "basic"
-        if temp == "2":
-            data[1] = "admin"
+        if current_user := User.find_by_name(data[0]):
+            cprint(f"{current_user.name} already exists. Returning to menu...", "dark_grey")
         else:
-            cprint("Invalid choice.", "red")
-        User.create(data[0], data[1])
+            cprint(f"Select a role for {data[0]} below:" "\n", "light_green")
+            print("1. basic")
+            print("2. admin")
+            temp = input("> ")
+            if temp == "1":
+                data[1] = "basic"
+                User.create(data[0], data[1])
+                print(f'New profile created: {data[0]} ({data[1]}).'"\n", "light_green")
+            elif temp == "2":
+                data[1] = "admin"
+                User.create(data[0], data[1])
+                print(f'New ADMIN profile created: {data[0]} ({data[1]}).'"\n", "light_green")
+            elif choice == "":
+                cprint("Returning to menu...", "dark_grey")
+            else:
+                cprint("Invalid choice.", "red")
 
     elif choice == "4":
         cprint("Enter the username below: ", "light_green")
@@ -344,7 +350,8 @@ def test_admin_menu():
     if choice == "1":
         for test in Test.get_all():
             sentence = Sentence.find_by_id(test.sentence_id)
-            cprint('\n'f"Test {test.id}",attrs=["underline"])
+            user = User.find_by_id(test.user_id)
+            cprint('\n'f"Test {test.id}: {user.name}",attrs=["underline"])
             cprint(f"Sentence:   {sentence.string}"
             '\n' f"User Input: {test.user_input}"
             '\n''\n' f"WPM: ------ {test.wpm}"
