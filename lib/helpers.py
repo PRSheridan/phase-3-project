@@ -256,8 +256,8 @@ def calculate_stats(username):
     stats["avg_wpm"] = current_user.avg_wpm()
     return stats
 
-
 #ADMIN CONSOLE ------------------------------------------------------------------------------------------
+# Display options for admin > users
 def user_admin_menu():
     cprint("Select an option below:" "\n", "light_green")
     print("1. View users")
@@ -267,12 +267,16 @@ def user_admin_menu():
     cprint("\n""Press ENTER to return to the menu...", "light_green")
     cprint("\n"f"{page_break_bottom}", "light_magenta")
     choice = input("> ")
+
+# View all User instances
     if choice == "1":
         cprint("\n"f"{page_break_tl}USERS{page_break_tr}""\n", "light_magenta")
         for user in User.get_all():
             cprint(f"{user.id}. {user.name} ({user.role})")
         cprint("\n""Press ENTER to return to the menu...", "light_green")
         input("> ""\n")
+
+# Edit an existing User instance's username and role
     elif choice == "2":
         cprint("Enter the username below: ", "light_green")
         if current_user := User.find_by_name(input("> ")):
@@ -301,6 +305,8 @@ def user_admin_menu():
                     cprint("Invalid choice.", "red")
         else:
             cprint("User does not exist.", "red")
+
+# Create a new User instance by entering a username and chosing role
     elif choice == "3":
         data = ["", ""]
         cprint(f"Enter a unique username below:" "\n", "light_green")
@@ -324,6 +330,8 @@ def user_admin_menu():
                 cprint("Returning to menu...", "dark_grey")
             else:
                 cprint("Invalid choice.", "red")
+
+# Delete a User instance
     elif choice == "4":
         cprint("Enter the username below: ", "light_green")
         if current_user := User.find_by_name(input("> ")):
@@ -341,6 +349,7 @@ def user_admin_menu():
     else:
         cprint("Invalid choice.", "red")
 
+# Display options for admin > test
 def test_admin_menu():
     cprint("Select an option below:" "\n", "light_green")
     print("1. View all tests")
