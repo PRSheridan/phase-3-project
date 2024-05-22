@@ -29,6 +29,8 @@ From the main menu, there are five options: **Test, Leaderboard, Profile, Logout
 
 **00. Quit** closes the application.  
 
+**Admin:** Allows an admin account to make changes to any user or test instance. This includes creating, viewing, editing, and deleting for all instances. Only accessible to accounts with the admin role which can be created by preceding the username with "adm_". 
+
 ## Future plans:
 - Make the application executable.
 - Create a more visually interesting testing format (show errors in real time).
