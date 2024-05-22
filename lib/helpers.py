@@ -349,7 +349,7 @@ def user_admin_menu():
     else:
         cprint("Invalid choice.", "red")
 
-# Display options for admin > test
+# Display options for admin > tests
 def test_admin_menu():
     cprint("Select an option below:" "\n", "light_green")
     print("1. View all tests")
@@ -360,6 +360,8 @@ def test_admin_menu():
     cprint("\n""Press ENTER to return to the menu...", "light_green")
     cprint("\n"f"{page_break_bottom}", "light_magenta")
     choice = input("> ")
+
+# View all Test instances
     if choice == "1":
         for test in Test.get_all():
             sentence = Sentence.find_by_id(test.sentence_id)
@@ -372,6 +374,8 @@ def test_admin_menu():
             '\n' f"Accuracy: - {test.accuracy}",attrs=["bold"])
         cprint("\n""Press ENTER to return to the menu...", "light_green")
         input("> ")
+
+# View all Test instances by a specified user
     elif choice == "2":
         cprint("Enter the username below: ", "light_green")
         if current_user := User.find_by_name(input("> ")):
@@ -385,6 +389,8 @@ def test_admin_menu():
                 '\n' f"Accuracy: - {test.accuracy}",attrs=["bold"])
             cprint("\n""Press ENTER to return to the menu...", "light_green")
             input("> ")
+
+# Edit an existing Test instance's WPM, time, accuracy, or user
     elif choice == "3":
         cprint("Enter the test ID below: ", "light_green")
         if test := Test.find_by_id(input("> ")):
@@ -418,6 +424,8 @@ def test_admin_menu():
                 cprint(f"Test {test.id} user ID set to {test.user_id}.", "light_green")
         else:
             cprint(f"Test does not exist. Returning to menu...", "red")
+
+# Create a new Test instance
     elif choice == "4":
         test_temp = ["", "", "", "", "", ""]
         cprint("Enter the time value below: ", "light_green")
@@ -447,6 +455,8 @@ def test_admin_menu():
             input("> ")
         except Exception as exc:
             print("Error creating new test:", exc)
+
+# Delete a Test instance
     elif choice == "5":
         cprint("Enter the test ID below: ", "light_green")
         if test := Test.find_by_id(input("> ")):
